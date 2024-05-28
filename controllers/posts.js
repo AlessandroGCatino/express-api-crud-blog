@@ -139,15 +139,19 @@ const store = (req, res) => {
         return res.status(400).send("Non hai inserito un'immagine.")
     }
 
-
+    let allSlugs = allPosts.map(post => post.slug)
     const slug = slugify(title, {lower: true, remove: "/"})
-    console.log(slug)
+    let counter = 1
+    let newSlug = slug
+    while (allSlugs.includes(newSlug)){
+        newSlug = `${slug}-${counter}`;
+    }
 
     const newPost = {
         title,
         content,
         tags,
-        slug
+        newSlug
     }
 
     updatePosts([...allPosts, newPost])
