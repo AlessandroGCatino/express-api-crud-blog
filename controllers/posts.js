@@ -1,6 +1,10 @@
 const path = require('path');
 const fs = require('fs');
+const slugify = require('slugify');
+
 let allPosts = require("../db/db.json")
+
+//esercizio 27/05
 
 const index = (req, res) => {
     let html = "<ul class='bigUl'>"
@@ -25,12 +29,14 @@ const index = (req, res) => {
         .bigUl{
             text-align: center;
             list-style-type: none;
+            padding-inline-start: 0;
         }
         .tagList{
             display: flex;
             justify-content: center;
             gap: 20px;
             list-style-type: none;
+            padding-inline-start: 0;
         }
         .taglist li {
             padding: 5px 10px;
@@ -117,9 +123,66 @@ const download = (req, res) => {
     }
 }
 
+//esercizio 28/05
+
+const store = (req, res) => {
+    const {title, content, tags} = req.body;
+    //controllo se tutti i campi sono stati compilati, elimino il file salvato se manca qualcosa
+    if (!title || !content || !tags ){
+        req.file?.filename && deletePublicFile(req.file.filename)
+        return res.status(400).send("Compila tutti i campi")
+    }
+    //verifico che il file sia stato caricato e che sia un'immagine 
+    // else if (!req.file || !req.file.mimetype.includes()) {
+    //     req.file?.filename && deletePublicFile(req.file.filename)
+    //     return res.status(400).send("Non hai inserito un'immagine.")
+    // }
+
+
+    const slug = slugify(title)
+    console.log(slug)
+
+    const newPost = {
+        title,
+        content,
+        tags,
+        slug
+    }
+
+    updatePosts([...allPosts, newPost])
+
+    res.format({
+        html: () => {
+            res.redirect("/posts")
+        },
+        default: () => {
+            res.json(newPost)
+        }
+    })
+
+}
+
+const destroy = (req, res) => {
+
+}
+
+const deletePublicFile = (fileName) => {
+    const filePath = path.join(__dirname, '../public', fileName);
+    fs.unlinkSync(filePath);
+}
+
+const updatePosts = (newPost) => {
+    const filePath = path.join(__dirname, '../db/db.json');
+    fs.writeFileSync(filePath, JSON.stringify(newPost));
+    allPosts = newPost;
+}
+
+
 module.exports = {
     index,
     show,
     download,
-    create
+    create,
+    store,
+    destroy
 }
