@@ -140,7 +140,7 @@ const store = (req, res) => {
     }
 
 
-    const slug = slugify(title, {lower: true})
+    const slug = slugify(title, {lower: true, remove: "/"})
     console.log(slug)
 
     const newPost = {
