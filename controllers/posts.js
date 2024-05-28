@@ -140,18 +140,20 @@ const store = (req, res) => {
     }
 
     let allSlugs = allPosts.map(post => post.slug)
-    const slug = slugify(title, {lower: true, remove: "/"})
+    const takenslug = slugify(title, {lower: true, remove: "/"})
     let counter = 1
-    let newSlug = slug
-    while (allSlugs.includes(newSlug)){
-        newSlug = `${slug}-${counter}`;
+    let slug = takenslug
+    while (allSlugs.includes(slug)){
+        slug = `${slug}-${counter}`;
+        counter++
     }
 
     const newPost = {
         title,
         content,
         tags,
-        newSlug
+        image: req.file.filename,
+        slug
     }
 
     updatePosts([...allPosts, newPost])
@@ -174,6 +176,8 @@ const destroy = (req, res) => {
     if(!postDeleted){
         return res.status(404).send(`No posts to delete. (Missing ${slug})`)
     }
+
+    deletePublicFile(postDeleted.image)
     updatePosts(allPosts.filter(post => post.slug != postDeleted.slug))
     res.format({
         html: () => {

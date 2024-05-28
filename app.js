@@ -19,8 +19,8 @@ app.get("/", (req, res) => {
 })
 
 app.use("/posts", routerPost)
-app.use(handleErrors)
 
+app.use(handleErrors)
 
 app.listen(3000, () => {
     console.log('Server attivo sulla porta http://localhost:3000.');
