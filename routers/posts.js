@@ -6,7 +6,7 @@ const {existsCheck} = require('../middlewares/posts.js');
 const multer = require('multer');
 const uploader = multer({dest: "public/imgs/posts"});
 
-
+ 
 
 router.get("/", postsController.index)
 

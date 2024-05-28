@@ -6,6 +6,6 @@ Esercizio
 <!-- Tutte le funzioni delle rotte dovranno essere scritte nel controller dedicato. -->
 <!-- Testare le rotte tramite Postman. -->
 Bonus
-Tramite una funzione, salvare l'array dei post nel file .json
+<!-- Tramite una funzione, salvare l'array dei post nel file .json
 nella funzione store permettere di passare i dati nel formato multipart/form-data tramite multer
-permettere di eseguire l'upload dell'immagine principale del post.
+permettere di eseguire l'upload dell'immagine principale del post. -->
