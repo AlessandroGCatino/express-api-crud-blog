@@ -128,18 +128,19 @@ const download = (req, res) => {
 const store = (req, res) => {
     const {title, content, tags} = req.body;
     //controllo se tutti i campi sono stati compilati, elimino il file salvato se manca qualcosa
-    if (!title || !content || !tags ){
+    if (!title || !content || !tags){
         req.file?.filename && deletePublicFile(req.file.filename)
         return res.status(400).send("Compila tutti i campi")
     }
     //verifico che il file sia stato caricato e che sia un'immagine 
-    // else if (!req.file || !req.file.mimetype.includes()) {
-    //     req.file?.filename && deletePublicFile(req.file.filename)
-    //     return res.status(400).send("Non hai inserito un'immagine.")
-    // }
+    else if (!req.file || !req.file.mimetype.includes("image")) {
+
+        req.file?.filename && deletePublicFile(req.file.filename)
+        return res.status(400).send("Non hai inserito un'immagine.")
+    }
 
 
-    const slug = slugify(title)
+    const slug = slugify(title, {lower: true})
     console.log(slug)
 
     const newPost = {
@@ -164,10 +165,24 @@ const store = (req, res) => {
 
 const destroy = (req, res) => {
 
+    const {slug} = req.params
+    const postDeleted = allPosts.find(post => post.slug === slug)
+    if(!postDeleted){
+        return res.status(404).send(`No posts to delete. (Missing ${slug})`)
+    }
+    updatePosts(allPosts.filter(post => post.slug != postDeleted.slug))
+    res.format({
+        html: () => {
+            res.redirect("/posts")
+        },
+        default: () => {
+            res.send("Post eliminato")
+        }
+    })
 }
 
 const deletePublicFile = (fileName) => {
-    const filePath = path.join(__dirname, '../public', fileName);
+    const filePath = path.join(__dirname, '../public/imgs/posts', fileName);
     fs.unlinkSync(filePath);
 }
 
