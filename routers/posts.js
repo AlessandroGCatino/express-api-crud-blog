@@ -27,4 +27,6 @@ router.delete("/:slug", existsCheck, postsController.destroy)
 
 
 
+
+
 module.exports = router;
